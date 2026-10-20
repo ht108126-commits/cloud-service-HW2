@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的運動紀錄</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f4f6f8;
+        }
+
+        h1, h2 {
+            color: #234;
+        }
+
+        form, .record {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: #198754;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-button {
+            background: #dc3545;
+        }
+
+        .record p {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>我的運動紀錄</h1>
+
+    <h2>新增運動</h2>
+
+    <form action="{{ url_for('add_record') }}" method="POST">
+        <label for="activity">運動項目 (activity)</label>
+        <input
+            type="text"
+            id="activity"
+            name="activity"
+            placeholder="例如：跑步、游泳、重訓"
+            required
+        >
+
+        <label for="duration">運動時長／分鐘 (duration)</label>
+        <input
+            type="number"
+            id="duration"
+            name="duration"
+            min="1"
+            step="1"
+            placeholder="例如：30"
+            required
+        >
+
+        <label for="notes">心得與備註 (notes)</label>
+        <textarea
+            id="notes"
+            name="notes"
+            rows="4"
+            placeholder="記錄今天的運動心得..."
+        ></textarea>
+
+        <button type="submit">新增紀錄</button>
+    </form>
+
+    <h2>歷史運動紀錄</h2>
+
+    {% if records %}
+        {% for record in records %}
+            <div class="record">
+                <h3>{{ record.activity }}</h3>
+
+                <p>
+                    <strong>運動時長：</strong>
+                    {{ record.duration }} 分鐘
+                </p>
+
+                <p>
+                    <strong>心得與備註：</strong>
+                    {{ record.notes or "尚無備註" }}
+                </p>
+
+                <form
+                    action="{{ url_for('delete_record',
+                                      record_id=record.id) }}"
+                    method="POST"
+                    onsubmit="return confirm('確定要刪除這筆紀錄嗎？');"
+                >
+                    <button class="delete-button" type="submit">
+                        刪除紀錄
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>目前還沒有運動紀錄，快來新增第一筆吧！</p>
+    {% endif %}
+
+</body>
+</html>
